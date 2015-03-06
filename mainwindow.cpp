@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     opengl_widget = new OpenGLWidget;
     opengl_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-    layout->addLayout(left_panel);
+    //layout->addLayout(left_panel);
     layout->addWidget(opengl_widget);
 
     window->setLayout(layout);
