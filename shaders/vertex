@@ -1,0 +1,11 @@
+#version 400
+
+in vec3 vertex;
+in vec3 color;
+smooth out vec4 theColor;
+
+void main(void)
+{
+        gl_Position = vec4(vertex, 1);
+        theColor = vec4(color, 1);
+}

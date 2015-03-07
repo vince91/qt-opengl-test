@@ -18,3 +18,6 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     openglwidget.h
+
+RESOURCES += \
+    resources.qrc
