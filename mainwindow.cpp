@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     //layout->addLayout(left_panel);
     layout->addWidget(opengl_widget);
 
+    layout->setContentsMargins(0,0,0,0);
+
     window->setLayout(layout);
     setCentralWidget(window);
 
