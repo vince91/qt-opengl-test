@@ -9,7 +9,8 @@
 OpenGLWidget::OpenGLWidget(QWidget *parent) : QOpenGLWidget(parent)
 {
     size = 12;
-    m_fov = 90.0f;
+    m_fov = 120.0f;
+    m_rotation = false;
 }
 
 void OpenGLWidget::initializeGL()
@@ -18,6 +19,15 @@ void OpenGLWidget::initializeGL()
 
     glEnable (GL_DEPTH_TEST);
     glDepthFunc (GL_LESS);
+
+
+   /* QVector<QVector3D> *vertexPositions = new QVector<QVector3D>();
+    vertexPositions->push_back(QVector3D(-0.5f,  0.5f,  -0.5f));
+    vertexPositions->push_back(QVector3D(0.5f, -0.5f,  -0.5f));
+    vertexPositions->push_back(QVector3D(-0.5f, -0.5f,  -0.5f));
+    vertexPositions->push_back(QVector3D(-0.5f, 0.5f, -0.5f));
+    vertexPositions->push_back(QVector3D(0.5f, 0.5f, -0.5f));
+    vertexPositions->push_back(QVector3D(0.5f, -0.5f, -0.5f));*/
 
     float vertexPositions[] = {
         -0.5f,  0.5f,  -0.5f,
@@ -119,6 +129,8 @@ void OpenGLWidget::initializeGL()
     m_vertexPositionBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
     m_vertexPositionBuffer.bind();
     m_vertexPositionBuffer.allocate(vertexPositions, size*3*3*sizeof(float));
+    //     m_vertexPositionBuffer.allocate(&vertexPositions->front(), size*3*sizeof(QVector3D));
+
 
     /* vertex colors buffer */
 
@@ -152,10 +164,6 @@ void OpenGLWidget::initializeGL()
     m_vao.release();
 
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(update()));
-    m_time.start();
-    m_lastTime = m_time.elapsed();
-    //m_timer.start(10);
-
 
 }
 
@@ -177,10 +185,13 @@ void OpenGLWidget::paintGL()
     m_shaderProgram.bind();
 
     /* rotating model */
-    m_angle = (m_time.elapsed() - m_lastTime) * 90 * 0.001;
-    m_angle = m_angle%360;
-    m_modelMatrix.rotate(m_angle, 0.0f, 1.0f, 0.0f);
-    m_shaderProgram.setUniformValue("model_matrix", m_modelMatrix);
+    if (m_rotation)
+    {
+        m_angle = (m_time.elapsed() - m_lastTime) * 90 * 0.001;
+        m_angle = m_angle%360;
+        m_modelMatrix.rotate(m_angle, 0.0f, 1.0f, 0.0f);
+        m_shaderProgram.setUniformValue("model_matrix", m_modelMatrix);
+    }
 
     glDrawArrays(GL_TRIANGLES, 0, size*3);
 
@@ -200,6 +211,18 @@ void OpenGLWidget::prepareShaderProgram()
 
 void OpenGLWidget::toggleRotation()
 {
+    if (m_rotation)
+    {
+       m_rotation = false;
+       m_timer.stop();
+    }
+    else
+    {
+        m_rotation = true;
+        m_timer.start(10);
+        m_time.start();
+        m_lastTime = m_time.elapsed();
+    }
 
 }
 

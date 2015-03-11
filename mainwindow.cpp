@@ -3,17 +3,16 @@
 #include "openglwidget.h"
 #include <QLabel>
 #include <QGroupBox>
+#include <QAction>
+#include <QToolBar>
 
-
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     setWindowTitle("OpenGL");
 
     QWidget *window = new QWidget;
     QHBoxLayout *layout = new QHBoxLayout;
     QVBoxLayout *left_panel = new QVBoxLayout;
-    QGroupBox *groupBox = new QGroupBox("Paramètres");
 
     opengl_widget = new OpenGLWidget;
     opengl_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -27,7 +26,14 @@ MainWindow::MainWindow(QWidget *parent)
     window->setLayout(layout);
     setCentralWidget(window);
 
-    left_panel->addWidget(groupBox);
+    /* toolbar */
+
+    QAction *rotationAction = new QAction(QIcon(":/icons/rotation.png"), "Toggle rotation", this);
+    rotationAction->setCheckable(true);
+    connect(rotationAction, SIGNAL(triggered()), opengl_widget, SLOT(toggleRotation()));
+    QToolBar *toolBar = addToolBar("Toolbar");
+    toolBar->addAction(rotationAction);
+
 }
 
 MainWindow::~MainWindow()
