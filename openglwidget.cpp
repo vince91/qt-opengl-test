@@ -8,9 +8,8 @@
 
 OpenGLWidget::OpenGLWidget(QWidget *parent) : QOpenGLWidget(parent)
 {
-    m_angle = 45.0f;
-    m_time.start();
-    m_lastTime = m_time.elapsed();
+    size = 12;
+    m_fov = 90.0f;
 }
 
 void OpenGLWidget::initializeGL()
@@ -141,26 +140,32 @@ void OpenGLWidget::initializeGL()
 
     /* matrices */
 
-    m_projectionMatrix.setToIdentity();
     m_viewMatrix.setToIdentity();
     m_modelMatrix.setToIdentity();
 
-    m_viewMatrix.rotate(-20.0f, 1.0f, 0.0f, 0.0f);
+    m_viewMatrix.translate(0.0f, 0.0f, -2.0f);
+    m_viewMatrix.rotate(35.0f, 1.0f, 0.0f, 0.0f);
 
-    m_shaderProgram.setUniformValue("projection_matrix", m_projectionMatrix);
     m_shaderProgram.setUniformValue("view_matrix", m_viewMatrix);
     m_shaderProgram.setUniformValue("model_matrix", m_modelMatrix);
 
     m_vao.release();
 
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(update()));
-    m_timer.start(10);
+    m_time.start();
+    m_lastTime = m_time.elapsed();
+    //m_timer.start(10);
+
 
 }
 
 void OpenGLWidget::resizeGL(int w, int h)
 {
+    /* updating opengl viewport size and projection matrix aspect ratio */
     glViewport(0, 0, w, h);
+    m_projectionMatrix.setToIdentity();
+    m_projectionMatrix.perspective(m_fov, (float)w/h, 0.1f, 100.0f);
+    m_shaderProgram.setUniformValue("projection_matrix", m_projectionMatrix);
 }
 
 void OpenGLWidget::paintGL()
@@ -191,6 +196,11 @@ void OpenGLWidget::prepareShaderProgram()
         qDebug() << "Couldn't compile fragment shader. " << m_shaderProgram.log();
     if(!m_shaderProgram.link())
         qDebug() << "Couldn't link shader program. " << m_shaderProgram.log();
+}
+
+void OpenGLWidget::toggleRotation()
+{
+
 }
 
 OpenGLWidget::~OpenGLWidget()

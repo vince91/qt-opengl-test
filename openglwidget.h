@@ -11,6 +11,7 @@
 
 class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
+    Q_OBJECT
 public:
     OpenGLWidget(QWidget *parent = 0);
     ~OpenGLWidget();
@@ -33,8 +34,14 @@ private:
     QTimer m_timer;
     QTime m_time;
 
-    int m_angle; int m_lastTime;
-    int size = 12;
+    int m_angle, m_lastTime, size;
+    float m_fov;
+
+    bool m_rotation;
+
+public slots:
+    void toggleRotation();
+
 
 };
 
