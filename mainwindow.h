@@ -12,8 +12,10 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+protected:
+    void keyPressEvent(QKeyEvent *);
 private:
-    OpenGLWidget *opengl_widget;
+    OpenGLWidget *m_openglWidget;
 };
 
 #endif // MAINWINDOW_H

@@ -14,15 +14,19 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
 public:
     OpenGLWidget(QWidget *parent = 0);
+    void keyPress(QKeyEvent *);
+
     ~OpenGLWidget();
 
 protected:
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
+    void wheelEvent(QWheelEvent *);
 
 private:
     void prepareShaderProgram();
+    void updateCamera();
 
     QOpenGLVertexArrayObject m_vao;
     QOpenGLBuffer m_vertexPositionBuffer;
@@ -38,6 +42,9 @@ private:
     float m_fov;
 
     bool m_rotation;
+
+    QVector3D m_eye, m_center;
+    float m_cameraPhi, m_cameraTheta, m_cameraDistance;
 
 public slots:
     void toggleRotation();

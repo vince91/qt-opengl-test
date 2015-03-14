@@ -5,12 +5,18 @@
 #include <QOpenGLVertexArrayObject>
 #include <iostream>
 #include <QFileInfo>
+#include <QWheelEvent>
+#include <QKeyEvent>
+#include <QtMath>
 
 OpenGLWidget::OpenGLWidget(QWidget *parent) : QOpenGLWidget(parent)
 {
     size = 12;
-    m_fov = 120.0f;
+    m_fov = 45.0f;
     m_rotation = false;
+    m_cameraPhi = 0.0f;
+    m_cameraTheta = 0.0f;
+    m_cameraDistance = 2.0f;
 }
 
 void OpenGLWidget::initializeGL()
@@ -152,11 +158,14 @@ void OpenGLWidget::initializeGL()
 
     /* matrices */
 
-    m_viewMatrix.setToIdentity();
     m_modelMatrix.setToIdentity();
 
-    m_viewMatrix.translate(0.0f, 0.0f, -2.0f);
-    m_viewMatrix.rotate(35.0f, 1.0f, 0.0f, 0.0f);
+    m_center = QVector3D(0.0f, 0.0f, 0.0f);
+    m_eye = QVector3D(0.0f, 0.0f, 2.0f);
+    updateCamera();
+
+    /*m_viewMatrix.translate(0.0f, 0.0f, -2.0f);
+    m_viewMatrix.rotate(35.0f, 1.0f, 0.0f, 0.0f);*/
 
     m_shaderProgram.setUniformValue("view_matrix", m_viewMatrix);
     m_shaderProgram.setUniformValue("model_matrix", m_modelMatrix);
@@ -224,6 +233,54 @@ void OpenGLWidget::toggleRotation()
         m_lastTime = m_time.elapsed();
     }
 
+}
+
+void OpenGLWidget::keyPress(QKeyEvent *event)
+{
+    qDebug() << event;
+
+    if (event->key() == Qt::Key_Up)
+    {
+        qDebug() << "key up";
+        m_cameraTheta -= 10.0f;
+
+        if (m_cameraTheta > 180)
+            m_cameraTheta -= 180.0f;
+
+
+
+    }
+
+    updateCamera();
+}
+
+void OpenGLWidget::wheelEvent(QWheelEvent *event)
+{
+    QPoint angleDelta = event->angleDelta();
+
+    if (angleDelta.ry() > 0)
+        m_cameraDistance -= 0.5;
+    else
+        m_cameraDistance += 0.5;
+
+    updateCamera();
+}
+
+void OpenGLWidget::updateCamera()
+{
+    qDebug() << m_cameraDistance << " " << m_cameraPhi << " " << m_cameraTheta;
+    m_eye.setX(m_cameraDistance * qSin(qDegreesToRadians(m_cameraTheta)) * qCos(qDegreesToRadians(m_cameraPhi)));
+    m_eye.setY(m_cameraDistance * qSin(qDegreesToRadians(m_cameraTheta)) * qSin(qDegreesToRadians(m_cameraPhi)));
+    m_eye.setZ(m_cameraDistance * qCos(qDegreesToRadians(m_cameraTheta)));
+
+
+
+    m_viewMatrix.setToIdentity();
+    m_viewMatrix.lookAt(m_eye, m_center, QVector3D(0.0f, 1.0f, 0.0f));
+
+    m_shaderProgram.bind();
+    m_shaderProgram.setUniformValue("view_matrix", m_viewMatrix);
+    update();
 }
 
 OpenGLWidget::~OpenGLWidget()

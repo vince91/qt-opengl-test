@@ -14,12 +14,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QHBoxLayout *layout = new QHBoxLayout;
     QVBoxLayout *left_panel = new QVBoxLayout;
 
-    opengl_widget = new OpenGLWidget;
-    opengl_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    m_openglWidget = new OpenGLWidget;
+    m_openglWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     layout->addLayout(left_panel);
-    layout->addWidget(opengl_widget);
-
+    layout->addWidget(m_openglWidget);
 
     layout->setContentsMargins(0,0,0,0);
 
@@ -30,10 +29,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     QAction *rotationAction = new QAction(QIcon(":/icons/rotation.png"), "Toggle rotation", this);
     rotationAction->setCheckable(true);
-    connect(rotationAction, SIGNAL(triggered()), opengl_widget, SLOT(toggleRotation()));
+    connect(rotationAction, SIGNAL(triggered()), m_openglWidget, SLOT(toggleRotation()));
     QToolBar *toolBar = addToolBar("Toolbar");
     toolBar->addAction(rotationAction);
+}
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    m_openglWidget->keyPress(event);
 }
 
 MainWindow::~MainWindow()
