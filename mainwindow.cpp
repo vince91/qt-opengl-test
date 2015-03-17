@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     /* toolbar */
 
-    QAction *rotationAction = new QAction(QIcon(":/icons/rotation.png"), "Toggle rotation", this);
+    QAction *rotationAction = new QAction("Toggle rotation", this);
     rotationAction->setCheckable(true);
     connect(rotationAction, SIGNAL(triggered()), m_openglWidget, SLOT(toggleRotation()));
     QToolBar *toolBar = addToolBar("Toolbar");

@@ -2,6 +2,5 @@
     <qresource prefix="/">
         <file>shaders/vertex</file>
         <file>shaders/fragment</file>
-        <file>icons/rotation.png</file>
     </qresource>
 </RCC>
